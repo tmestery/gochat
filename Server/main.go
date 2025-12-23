@@ -1,52 +1,59 @@
 package main
 
+import (
+	"log"
+	"net"
+	"net/http"
+	"net/rpc"
+)
+
 type Item struct {
-	title String
-	body String
+	title string
+	body string
 }
 
+// used to elevate all funcs to methods
+type API []int
 var database []Item
 
-func getByName(title String) Item {
+func (a *API) GetByName(title string, reply *Item) error {
 	var getItem Item
 
 	for _, val := range database {
-		if val.title = title {
+		if val.title == title {
 			getItem = val
 		}
 	}
 
-	return getItem
+	*reply = getItem
+	return nil
 }
 
-func createItem(item Item) Item {
+func (a *API) AddItem(item Item, reply *Item) error {
 	database = append(database, item)
-	return item
+	*reply = item
+	return nil
 }
 
-func addItem(item Item) Item {
-	database = append(database, item)
-	return item
-}
-
-func editItem(title String, edit Item) Item {
+func (a *API) EditItem(edit Item, reply *Item) error {
 	var changed Item
 
 	for idx, val := range database {
-		if val.title == title {
-			database[idx] = edit
-			changed = edit
+		if val.title == edit.title {
+			database[idx] = Item{edit.title, edit.body}
+			changed = database[idx]
 		}
 	}
 
-	return changed
+	*reply = changed
+	return nil
 }
 
-func deleteItem(item Item) Item {
+func (a *API) DeleteItem(item Item, reply *Item) error {
 	var del Item
 
 	for idx, val := range database {
-		if val.title = item.title && val.body == item.body {
+		if val.title == item.title && val.body == item.body {
 			// utilizes splicing to create new database without that one item
 			database = append(database[:idx], database[idx + 1:]...)
 			del = item
@@ -54,9 +61,29 @@ func deleteItem(item Item) Item {
 		}
 	}
 
-	return del
+	*reply = del
+	return nil
 }
 
 func main() {
+	var api = new(API)
+	err := rpc.Register(api)
 
+	if err != nil {
+		log.Fatal("error registering API", err)
+	}
+
+	rpc.HandleHTTP()
+
+	listener, err := net.Listen("tcp", ":4040")
+	if err != nil {
+		log.Fatal("Listener error", err)
+	}
+
+	log.Printf("Serving rpc on port %d", 4040)
+
+	err = http.Serve(listener, nil)
+	if err != nil {
+		log.Fatal("Error serving", err)
+	}
 }
