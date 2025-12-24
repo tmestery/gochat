@@ -8,8 +8,8 @@ import (
 )
 
 type Item struct {
-	title string
-	body string
+	Title string
+	Body string
 }
 
 // used to elevate all funcs to methods
