@@ -25,7 +25,7 @@ func (a *API) GetByName(title string, reply *Item) error {
 	var getItem Item
 
 	for _, val := range database {
-		if val.title == title {
+		if val.Title == title {
 			getItem = val
 		}
 	}
@@ -44,8 +44,8 @@ func (a *API) EditItem(edit Item, reply *Item) error {
 	var changed Item
 
 	for idx, val := range database {
-		if val.title == edit.title {
-			database[idx] = Item{edit.title, edit.body}
+		if val.Title == edit.Title {
+			database[idx] = Item{edit.Title, edit.Body}
 			changed = database[idx]
 		}
 	}
@@ -58,7 +58,7 @@ func (a *API) DeleteItem(item Item, reply *Item) error {
 	var del Item
 
 	for idx, val := range database {
-		if val.title == item.title && val.body == item.body {
+		if val.Title == item.Title && val.Body == item.Body {
 			// utilizes splicing to create new database without that one item
 			database = append(database[:idx], database[idx + 1:]...)
 			del = item

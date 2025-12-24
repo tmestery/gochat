@@ -22,8 +22,8 @@ func main() {
 		log.Fatal("Connection Error: ", err)
 	}
 
-	a := Item{"First", "A first item"}
-	b := Item{"Second", "A second item"}
+	a := Item{"1st", ""}
+	b := Item{"2nd", "A second item"}
 
 	fmt.Println("Commands:\n1. Add Item\n\n")
 	fmt.Scan(&choice)
