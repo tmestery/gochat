@@ -17,5 +17,5 @@ func displayIntro() {
                     real-time CLI chat
 `)
 
-	fmt.Println("\nWelcome to gochat!")
+	fmt.Println("Welcome to gochat!")
 }
