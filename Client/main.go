@@ -18,9 +18,9 @@ func menuOptions() {
 func addItemOptions() (string, string) {
 	var title, body string
 
-	fmt.Println("\n-------------adding an item-------------\nEnter item name:\n")
+	fmt.Println("\n-------------adding an item-------------\nEnter item name:")
 	fmt.Scan(&title)
-	fmt.Println("\nEnter item body:\n")
+	fmt.Println("\nEnter item body:")
 	fmt.Scan(&body)
 
 	fmt.Println("Body: ", body, "Title: ", title)
