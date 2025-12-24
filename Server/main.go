@@ -16,6 +16,11 @@ type Item struct {
 type API []int
 var database []Item
 
+func (a *API) GetDB(title string, reply *[]Item) error {
+	*reply = database
+	return nil
+}
+
 func (a *API) GetByName(title string, reply *Item) error {
 	var getItem Item
 
