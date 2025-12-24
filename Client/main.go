@@ -30,7 +30,6 @@ func addItemOptions() (string, string) {
 func main() {
 	var reply Item
 	var db []Item
-	var choice int
 
 	client, err := rpc.DialHTTP("tcp", "localhost:4040")
 
