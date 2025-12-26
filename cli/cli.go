@@ -1,4 +1,4 @@
-package main
+package cli
 
 import (
   "fmt"
@@ -7,7 +7,7 @@ import (
   "os"
   "strings"
 	"github.com/tmestery/gochat/client"
-  "github.com/tmestery/gochat/cli"
+  //"github.com/tmestery/gochat/cli"
 )
 
 type Item struct {
@@ -15,7 +15,7 @@ type Item struct {
 	Body  string
 }
 
-func main() {
+func Runner() {
   displayIntro()
   loginSignup()
   
