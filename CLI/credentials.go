@@ -12,16 +12,16 @@ type User struct {
 var userDatabase []User
 
 func login() {
-	fmt.Println("Login Screen")
+	fmt.Println("Login")
 
 	var username string
 	var password string
 	var running bool = true
 	
 	for running {
-		fmt.Println("Enter username:")
+		fmt.Print("Enter username: ")
 		fmt.Scanln(&username)
-		fmt.Println("Enter password:")
+		fmt.Print("Enter password: ")
 		fmt.Scanln(&password)
 
 		var loginUser User = User{Username: username, Password: password}
@@ -44,18 +44,13 @@ func signup() {
 	var username string
 	var password string
 
-	fmt.Println("Enter username:")
+	fmt.Print("Enter username: ")
 	fmt.Scanln(&username)
-	fmt.Println("Enter password:")
+	fmt.Print("Enter password: ")
 	fmt.Scanln(&password)
 
 	var signedUpUser User = User{Username: username, Password: password}
 	userDatabase = append(userDatabase, signedUpUser)
 
 	fmt.Println("Signup Successful.")
-}
-
-func main() {
-	signup()
-	login()
 }
