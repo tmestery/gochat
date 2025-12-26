@@ -7,6 +7,7 @@ import (
   "os"
   "strings"
 	"github.com/tmestery/gochat/client"
+  "github.com/tmestery/gochat/cli"
 )
 
 type Item struct {
@@ -16,14 +17,15 @@ type Item struct {
 
 func main() {
   displayIntro()
+  loginSignup()
+  
+  c, err := client.New("localhost:4040")
+  if err != nil {
+	log.Fatal(err)
+  }
 
-	c, err := client.New("localhost:4040")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	var reply client.Item
-	var db []client.Item
+  var reply client.Item
+  var db []client.Item
   var title, body string
   running := true
 
@@ -59,8 +61,25 @@ func main() {
   }
 }
 
+func loginSignup() {
+  var option int
+  var running bool
+
+  for running {
+    fmt.Println("1. Login\n2. Signup")
+    fmt.Scanln(&option)
+
+    if option == 1 {
+      signup()
+    }
+
+    login()
+    break
+  }
+}
+
 func menuOptions() {
-	fmt.Println("-------------gochat command options-------------\n1. Get Database\n2. Get Item By Name\n3. Add Item\n4. Edit Item\n5. Delete Item\n6. Exit")
+  fmt.Println("-------------gochat command options-------------\n1. Get Database\n2. Get Item By Name\n3. Add Item\n4. Edit Item\n5. Delete Item\n6. Exit")
 }
 
 func addItemOptions() (string, string) {
