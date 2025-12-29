@@ -16,7 +16,7 @@ type Item struct {
 type API []int
 var database []Item
 
-func (a *API) GetDB(title string, reply *[]Item) error {
+func (a *API) getMessageList(title string, reply *[]Item) error {
 	*reply = database
 	return nil
 }

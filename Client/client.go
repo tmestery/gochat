@@ -22,7 +22,7 @@ func New(addr string) (*Client, error) {
 }
 
 func (c *Client) GetDB(reply *[]Item) error {
-	return c.rpc.Call("API.GetDB", "", reply)
+	return c.rpc.Call("API.getMessageList", "", reply)
 }
 
 func (c *Client) GetByName(item Item, reply *Item) error {
