@@ -1,94 +1,65 @@
 package main
 
 import (
+	"database/sql"
 	"log"
 	"net"
 	"net/http"
 	"net/rpc"
+	"github.com/tmestery/gochat/database"
 )
 
-type Item struct {
-	Title string
-	Body string
+type API struct {
+	DB *sql.DB
 }
 
-// used to elevate all funcs to methods
-type API []int
-var database []Item
-
-func (a *API) getMessageList(title string, reply *[]Item) error {
-	*reply = database
-	return nil
-}
-
-func (a *API) GetByName(title string, reply *Item) error {
-	var getItem Item
-
-	for _, val := range database {
-		if val.Title == title {
-			getItem = val
-		}
+// get all messages
+func (a *API) GetMessages(_ struct{}, reply *[]database.Message) error {
+	msgs, err := database.GetMessages(a.DB)
+	if err != nil {
+		return err
 	}
 
-	*reply = getItem
+	*reply = msgs
 	return nil
 }
 
-func (a *API) AddItem(item Item, reply *Item) error {
-	database = append(database, item)
-	*reply = item
-	return nil
-}
-
-func (a *API) EditItem(edit Item, reply *Item) error {
-	var changed Item
-
-	for idx, val := range database {
-		if val.Title == edit.Title {
-			database[idx] = Item{edit.Title, edit.Body}
-			changed = database[idx]
-		}
+// add a message
+func (a *API) AddMessage(msg database.Message, reply *database.Message) error {
+	err := database.InsertMessage(a.DB, msg.Username, msg.Body)
+	if err != nil {
+		return err
 	}
 
-	*reply = changed
-	return nil
-}
-
-func (a *API) DeleteItem(item Item, reply *Item) error {
-	var del Item
-
-	for idx, val := range database {
-		if val.Title == item.Title && val.Body == item.Body {
-			// utilizes splicing to create new database without that one item
-			database = append(database[:idx], database[idx + 1:]...)
-			del = item
-			break
-		}
-	}
-
-	*reply = del
+	*reply = msg
 	return nil
 }
 
 func main() {
-	var api = new(API)
-	err := rpc.Register(api)
-
+	db, err := database.Open()
 	if err != nil {
-		log.Fatal("error registering API", err)
+		log.Fatal(err)
+	}
+	
+	defer db.Close()
+
+	if err := database.Init(db); err != nil {
+		log.Fatal(err)
+	}
+
+	api := &API{DB: db}
+
+	if err := rpc.Register(api); err != nil {
+		log.Fatal(err)
 	}
 
 	rpc.HandleHTTP()
 
 	listener, err := net.Listen("tcp", ":4040")
 	if err != nil {
-		log.Fatal("Listener error", err)
+		log.Fatal(err)
 	}
 
-	log.Printf("Serving rpc on port %d", 4040)
-
-	err = http.Serve(listener, nil)
-	if err != nil {
-		log.Fatal("Error serving", err)
-	}
+	log.Println("RPC server running on :4040")
+	log.Fatal(http.Serve(listener, nil))
 }
