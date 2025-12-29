@@ -11,7 +11,7 @@ type User struct {
 
 var userDatabase []User
 
-func login() {
+func login() string {
 	fmt.Println("Login")
 
 	var username string
@@ -26,16 +26,22 @@ func login() {
 
 		var loginUser User = User{Username: username, Password: password}
 
+		found := false
 		for _, user := range userDatabase {
 			if loginUser == user {
 				fmt.Println("Logging Successful.")
 				running = false
+				found = true
 				break
 			}
 		}
 
-		fmt.Println("Invalid username/password.")
+		if !found {
+			fmt.Println("Invalid username/password.")
+		}
 	}
+
+	return username
 }
 
 func signup() {
