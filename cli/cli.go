@@ -6,7 +6,7 @@ import (
   "bufio"
   "os"
   "strings"
-  "github.com/tmestery/gochat/client"
+  "github.com/tmestery/gochat/Client"
   "database/sql"
 )
 
