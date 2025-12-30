@@ -6,12 +6,26 @@ import (
   "bufio"
   "os"
   "strings"
-	"github.com/tmestery/gochat/client"
+  "github.com/tmestery/gochat/client"
+  "database/sql"
 )
 
 func Runner() {
 	displayIntro()
-	username := loginSignup()
+
+	db, err := Open()
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	defer db.Close()
+
+	if err := Init(db); err != nil {
+		log.Fatal(err)
+	}
+
+	username := loginSignup(db)
 
 	c, err := client.New("localhost:4040")
 	if err != nil {
@@ -67,7 +81,7 @@ func Runner() {
 	}
 }
 
-func loginSignup() string {
+func loginSignup(db *sql.DB) string {
   var option int
   var username string
   running := true
@@ -77,10 +91,10 @@ func loginSignup() string {
     fmt.Scanln(&option)
 
     if option == 1 {
-      signup()
+      signup(db)
     }
 
-    username = login()
+    username = login(db)
     break
   }
 

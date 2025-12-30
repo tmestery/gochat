@@ -2,61 +2,78 @@ package cli
 
 import (
   "fmt"
+  "database/sql"
 )
 
 type User struct {
+	ID		 int
 	Username string
 	Password string
+	CreatedAt string
 }
 
-var userDatabase []User
+type API struct {
+	DB *sql.DB
+}
 
-func login() string {
+func login(db *sql.DB) string {
 	fmt.Println("Login")
 
-	var username string
-	var password string
-	var running bool = true
-	
-	for running {
+	var username, password string
+
+	for {
 		fmt.Print("Enter username: ")
 		fmt.Scanln(&username)
 		fmt.Print("Enter password: ")
 		fmt.Scanln(&password)
 
-		var loginUser User = User{Username: username, Password: password}
-
-		found := false
-		for _, user := range userDatabase {
-			if loginUser == user {
-				fmt.Println("Logging Successful.")
-				running = false
-				found = true
-				break
-			}
+		ok, err := FindUser(db, username, password)
+		if err != nil {
+			fmt.Println("Error:", err)
+			continue
 		}
 
-		if !found {
-			fmt.Println("Invalid username/password.")
+		if ok {
+			fmt.Println("Login successful.")
+			return username
 		}
+
+		fmt.Println("Invalid username/password.")
 	}
-
-	return username
 }
 
-func signup() {
+func signup(db *sql.DB) {
 	fmt.Println("Signup")
 
-	var username string
-	var password string
+	var username, password string
 
 	fmt.Print("Enter username: ")
 	fmt.Scanln(&username)
 	fmt.Print("Enter password: ")
 	fmt.Scanln(&password)
 
-	var signedUpUser User = User{Username: username, Password: password}
-	userDatabase = append(userDatabase, signedUpUser)
+	err := CreateUser(db, username, password)
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
 
-	fmt.Println("Signup Successful.")
+	fmt.Println("Signup successful.")
+}
+
+func FindUser(db *sql.DB, user string, pass string) (bool, error) {
+	row := db.QueryRow(
+		"SELECT COUNT(*) FROM users WHERE username = ? AND password = ?",
+		user,
+		pass,
+	)
+
+	var count int
+	err := row.Scan(&count)
+
+	if count > 0 {
+		return true, err
+	}
+
+	return false, err
 }
